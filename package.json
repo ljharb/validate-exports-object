@@ -1,0 +1,25 @@
+{
+	"name": "validate-exports-object",
+	"version": "0.0.0",
+	"description": "Validate an object in the \"exports\" field",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ljharb/validate-exports-object.git"
+	},
+	"keywords": [
+		"package.json",
+		"exports",
+		"validate",
+		"object"
+	],
+	"author": "Jordan Harband <ljharb@gmail.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/ljharb/validate-exports-object/issues"
+	},
+	"homepage": "https://github.com/ljharb/validate-exports-object#readme"
+}
