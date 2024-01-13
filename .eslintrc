@@ -1,0 +1,30 @@
+{
+	"root": true,
+
+	"extends": "@ljharb",
+
+	"ignorePatterns": [
+		"test/list-exports",
+	],
+
+	"rules": {
+		"complexity": "off",
+		"id-length": "off",
+		"max-depth": "off",
+		"new-cap": ["error", {
+			"capIsNewExceptions": [
+				"GetIntrinsic",
+			],
+		}],
+		"max-lines-per-function": "off",
+		"max-statements": "off",
+	},
+
+	"overrides": [
+		{
+			"files": "test/**",
+			"rules": {
+			},
+		},
+	],
+}
