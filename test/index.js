@@ -11,6 +11,7 @@ var validateExportsObject = require('../');
 
 var fnMsg = 'package `exports` is invalid; how did you get a function in there?';
 var comboMsg = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` is invalid; an object in "exports" cannot contain some keys starting with `.` and some not. The exports object must either be an object of package subpath keys or an object of main entry condition name keys only.';
+/** @type {(pairs: string[]) => string} */
 var nmMsg = function (pairs) {
 	return 'ERR_INVALID_PACKAGE_TARGET: package `exports` is invalid; values may not contain a `node_modules` path segment (' + pairs.sort().join(', ') + ').';
 };
@@ -204,8 +205,9 @@ test('validateExportsObject', function (t) {
 		inspect(goodTopBadNested) + ' is an invalid exports object'
 	);
 
-	var fixtures;
+	/** @type {string[]} */ var fixtures;
 	try { fixtures = fs.readdirSync(fixturesDir); } catch (e) {}
+	// @ts-expect-error ts(2454) TS can't narrow based on tape's `skip`
 	t.test('fixtures', { skip: !fixtures }, function (st) {
 		forEach(fixtures, function (fixture) {
 			var fixtureDir = path.resolve(fixturesDir, fixture);

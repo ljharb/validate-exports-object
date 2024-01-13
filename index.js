@@ -13,6 +13,17 @@ var hasNMSegment = regexTester(/(^|\/)node_modules(\/|$)/);
 
 var fnMsg = 'package `exports` is invalid; how did you get a function in there?';
 
+/** @typedef {'empty' | 'files' | 'conditions'} StatusString */
+
+/** @typedef {{ [fileURL in `./${string}`]: Exports }} ExportsFiles */
+
+/** @typedef {{ [condition: string]: condition extends `./${string}` ? never : Exports; }} ExportsConditions */
+
+/** @typedef {Array<Exports>} ExportsArray */
+
+/** @typedef {null | string | ExportsConditions | ExportsFiles | ExportsArray} Exports */
+
+/** @type {<T = unknown>(obj: T) => { __proto__: null, normalized: undefined | Exports, problems: string[], status: false | StatusString }} */
 module.exports = function validateExportsObject(obj) {
 	if (!obj || typeof obj !== 'object') {
 		var isFn = typeof obj === 'function';
@@ -27,17 +38,18 @@ module.exports = function validateExportsObject(obj) {
 
 	var seenDot = false;
 	var seenNonDot = false;
-	var nmSegments = [];
+	/** @type {string[]} */ var nmSegments = [];
 	var seenFn = false;
-	var problems = [];
-	var status = 'empty';
+	/** @type {string[]} */ var problems = [];
+	/** @type {StatusString} */ var status = 'empty';
 
-	var normalized = isArray(obj) ? [] : { __proto__: null };
+	/** @type {Exports} */ var normalized = isArray(obj) ? [] : { __proto__: null };
 
 	for (var i = 0; i < exportKeys.length; i++) {
 		var key = exportKeys[i];
 		var start = $charAt(key, 0);
-		var value = obj[key];
+		// @ts-expect-error ts(7053) we know this is a valid key. TODO: fix the fn type to handle this
+		/** @type {unknown} */ var value = obj[key];
 
 		if (typeof value === 'function') {
 			seenFn = true;
@@ -47,12 +59,14 @@ module.exports = function validateExportsObject(obj) {
 			} else if (start === '.') {
 				seenDot = true;
 				if (status !== 'conditions') {
+					// @ts-expect-error ts(7053) objects are arbitrarily writable
 					normalized[key] = value;
 					status = 'files';
 				}
 			} else {
 				seenNonDot = true;
 				if (status !== 'files') {
+					// @ts-expect-error ts(7053) objects are arbitrarily writable
 					normalized[key] = value;
 					status = 'conditions';
 				}
@@ -78,6 +92,7 @@ module.exports = function validateExportsObject(obj) {
 				}
 			}
 
+			// @ts-expect-error ts(7053) objects are arbitrarily writable
 			normalized[key] = subObjectResult.normalized;
 		}
 	}
