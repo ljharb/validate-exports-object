@@ -36,8 +36,6 @@ module.exports = function validateExportsObject(obj) {
 	}
 	var exportKeys = keys(obj);
 
-	var seenDot = false;
-	var seenNonDot = false;
 	/** @type {string[]} */ var nmSegments = [];
 	var seenFn = false;
 	/** @type {string[]} */ var problems = [];
@@ -57,19 +55,19 @@ module.exports = function validateExportsObject(obj) {
 			if (hasNMSegment(decodeURI(value))) {
 				nmSegments[nmSegments.length] = '`' + key + '`: `' + value + '`';
 			} else if (start === '.') {
-				seenDot = true;
-				if (status !== 'conditions') {
+				if (status === 'conditions') {
+					problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `' + key + '`) is invalid; an object in "exports" cannot contain some keys starting with `.` and some not. The exports object must either be an object of package subpath keys or an object of main entry condition name keys only.';
+				} else {
 					// @ts-expect-error ts(7053) objects are arbitrarily writable
 					normalized[key] = value;
 					status = 'files';
 				}
+			} else if (status === 'files') {
+				problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `' + key + '`) is invalid; an object in "exports" cannot contain some keys starting with `.` and some not. The exports object must either be an object of package subpath keys or an object of main entry condition name keys only.';
 			} else {
-				seenNonDot = true;
-				if (status !== 'files') {
-					// @ts-expect-error ts(7053) objects are arbitrarily writable
-					normalized[key] = value;
-					status = 'conditions';
-				}
+				// @ts-expect-error ts(7053) objects are arbitrarily writable
+				normalized[key] = value;
+				status = 'conditions';
 			}
 		} else {
 			var subObjectResult = validateExportsObject(value);
@@ -81,26 +79,14 @@ module.exports = function validateExportsObject(obj) {
 			if (subObjectResult.status === 'empty') {
 				problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` is invalid; sub-object for `' + key + '` is empty.';
 			} else {
-				if (start === '.') {
-					seenDot = true;
-					if (status !== 'conditions') {
-						status = 'files';
-					}
-				} else {
-					seenNonDot = true;
-					if (status !== 'files') {
-						status = 'conditions';
-					}
+				if (status === 'empty') {
+					status = start === '.' ? 'files' : 'conditions';
 				}
 
 				// @ts-expect-error ts(7053) objects are arbitrarily writable
 				normalized[key] = subObjectResult.normalized;
 			}
 		}
-	}
-
-	if (seenDot && seenNonDot) {
-		problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` is invalid; an object in "exports" cannot contain some keys starting with `.` and some not. The exports object must either be an object of package subpath keys or an object of main entry condition name keys only.';
 	}
 
 	if (seenFn) {
