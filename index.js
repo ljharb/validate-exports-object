@@ -23,7 +23,7 @@ var fnMsg = 'package `exports` is invalid; how did you get a function in there?'
 
 /** @typedef {null | string | ExportsConditions | ExportsFiles | ExportsArray} Exports */
 
-/** @type {<T = unknown>(obj: T) => { __proto__: null, normalized: undefined | Exports, problems: string[], status: false | StatusString }} */
+/** @type {<T = unknown>(obj: T, parentKey?: string) => { __proto__: null, normalized: undefined | Exports, problems: string[], status: false | StatusString }} */
 module.exports = function validateExportsObject(obj) {
 	if (!obj || typeof obj !== 'object') {
 		var isFn = typeof obj === 'function';
@@ -43,6 +43,9 @@ module.exports = function validateExportsObject(obj) {
 
 	/** @type {Exports} */ var normalized = isArray(obj) ? [] : { __proto__: null };
 
+	/** @type {string | null} */ var parentKey = arguments.length > 1 ? arguments[1] : null;
+	var fullKey = typeof parentKey === 'string' ? parentKey + '` -> `' : '';
+
 	for (var i = 0; i < exportKeys.length; i++) {
 		var key = exportKeys[i];
 		var start = $charAt(key, 0);
@@ -56,29 +59,31 @@ module.exports = function validateExportsObject(obj) {
 				nmSegments[nmSegments.length] = '`' + key + '`: `' + value + '`';
 			} else if (start === '.') {
 				if (status === 'conditions') {
-					problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `' + key + '`) is invalid; an object in "exports" cannot contain some keys starting with `.` and some not. The exports object must either be an object of package subpath keys or an object of main entry condition name keys only.';
+					problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `' + fullKey + key + '`) is invalid; an object in "exports" cannot contain some keys starting with `.` and some not. The exports object must either be an object of package subpath keys or an object of main entry condition name keys only.';
 				} else {
 					// @ts-expect-error ts(7053) objects are arbitrarily writable
 					normalized[key] = value;
 					status = 'files';
 				}
 			} else if (status === 'files') {
-				problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `' + key + '`) is invalid; an object in "exports" cannot contain some keys starting with `.` and some not. The exports object must either be an object of package subpath keys or an object of main entry condition name keys only.';
+				problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `' + fullKey + key + '`) is invalid; an object in "exports" cannot contain some keys starting with `.` and some not. The exports object must either be an object of package subpath keys or an object of main entry condition name keys only.';
 			} else {
 				// @ts-expect-error ts(7053) objects are arbitrarily writable
 				normalized[key] = value;
 				status = 'conditions';
 			}
 		} else {
-			var subObjectResult = validateExportsObject(value);
+			var subObjectResult = validateExportsObject(value, key);
+
 			if (subObjectResult.problems.length > 0) {
 				problems = safeConcat(problems, subObjectResult.problems);
-				break; // eslint-disable-line no-restricted-syntax
+			} else if (subObjectResult.status === 'empty') {
+				problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `' + fullKey + key + '`) is invalid; sub-object is empty.';
+			} else if (subObjectResult.status === 'files') {
+				problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `' + fullKey + key + '`) is invalid; sub-object has keys that start with `./`.';
 			}
 
-			if (subObjectResult.status === 'empty') {
-				problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` is invalid; sub-object for `' + key + '` is empty.';
-			} else {
+			if (subObjectResult.status === 'conditions') {
 				if (status === 'empty') {
 					status = start === '.' ? 'files' : 'conditions';
 				}

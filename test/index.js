@@ -18,6 +18,10 @@ var comboMsg = function (key) {
 var nmMsg = function (pairs) {
 	return 'ERR_INVALID_PACKAGE_TARGET: package `exports` is invalid; values may not contain a `node_modules` path segment (' + pairs.sort().join(', ') + ').';
 };
+/** @type {(key: string) => string} */
+var topLevelMsg = function (key) {
+	return 'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `' + key + '`) is invalid; sub-object has keys that start with `./`.';
+};
 
 var fixturesDir = path.resolve(__dirname, './list-exports/packages/tests/fixtures');
 
@@ -235,15 +239,69 @@ test('validateExportsObject', function (t) {
 				}
 			},
 			problems: [
-				'ERR_INVALID_PACKAGE_CONFIG: package `exports` is invalid; sub-object for `./bar` is empty.'
+				'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `./bar`) is invalid; sub-object is empty.'
 			],
 			status: 'files'
 		},
 		inspect(nestedEmpty) + ' is invalid; only a non-nested object can have file path keys'
 	);
 
+	var nestedFiles = {
+		'./foo': {
+			'./bar': './foo.mjs',
+			'default': './foo.js'
+		},
+		'./bar': {
+			'import': './foo.mjs',
+			'./bar': './foo.mjs',
+			'default': './foo.js'
+		},
+		'./baz': {
+			'import': {
+				'./baz': './bar.mjs'
+			},
+			'default': './bar/bar.mjs'
+		}
+	};
+	t.deepEqual(
+		validateExportsObject(nestedFiles),
+		{
+			__proto__: null,
+			normalized: {
+				__proto__: null,
+				'./bar': {
+					__proto__: null,
+					'import': './foo.mjs',
+					'default': './foo.js'
+				},
+				'./baz': {
+					__proto__: null,
+					'default': './bar/bar.mjs'
+				}
+			},
+			problems: [
+				comboMsg('./bar` -> `./bar'),
+				comboMsg('./foo` -> `default'),
+				topLevelMsg('./baz` -> `import')
+			].sort(),
+			status: 'files'
+		},
+		inspect(nestedFiles) + ' is invalid'
+	);
+
 	/** @type {string[]} */ var fixtures;
 	try { fixtures = fs.readdirSync(fixturesDir); } catch (e) {}
+	/** @type {{ [fixture in string]: string[] }} */
+	var fixtureProblems = {
+		'ex-node-modules': [
+			nmMsg(['`./local`: `./node_modules/dep/dep.js`', '`./local-encoded`: `./no%64e_modules/dep/dep.js`'])
+		],
+		'single-spa-layout': [
+			'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `import`) is invalid; sub-object has keys that start with `./`.',
+			'ERR_INVALID_PACKAGE_CONFIG: package `exports` (key `require`) is invalid; sub-object has keys that start with `./`.'
+		]
+	};
+
 	// @ts-expect-error ts(2454) TS can't narrow based on tape's `skip`
 	t.test('fixtures', { skip: !fixtures }, function (st) {
 		forEach(fixtures, function (fixture) {
@@ -251,7 +309,6 @@ test('validateExportsObject', function (t) {
 			var pkg = require(path.resolve(fixtureDir, 'project/package.json')); // eslint-disable-line global-require
 
 			if ('exports' in pkg) {
-				var expectedProblems = fixture === 'ex-node-modules' ? [nmMsg(['`./local`: `./node_modules/dep/dep.js`', '`./local-encoded`: `./no%64e_modules/dep/dep.js`'])] : [];
 				st.test('fixture: ' + fixture, function (s2t) {
 					var result = validateExportsObject(pkg.exports);
 
@@ -260,7 +317,7 @@ test('validateExportsObject', function (t) {
 						{
 							__proto__: null,
 							normalized: result.normalized,
-							problems: expectedProblems,
+							problems: fixtureProblems[fixture] || [],
 							status: result.status // TODO: figure out how to test the status properly
 						},
 						'fixture ' + fixture + ' has ' + (result.problems.length > 0 ? 'an invalid' : 'a valid') + ' exports object'
