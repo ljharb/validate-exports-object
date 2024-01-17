@@ -205,6 +205,33 @@ test('validateExportsObject', function (t) {
 		inspect(goodTopBadNested) + ' is an invalid exports object'
 	);
 
+	var nestedEmpty = {
+		'./foo': {
+			'import': './foo.mjs',
+			'default': './foo.js'
+		},
+		'./bar': {}
+	};
+	t.deepEqual(
+		validateExportsObject(nestedEmpty),
+		{
+			__proto__: null,
+			normalized: {
+				__proto__: null,
+				'./foo': {
+					__proto__: null,
+					'import': './foo.mjs',
+					'default': './foo.js'
+				}
+			},
+			problems: [
+				'ERR_INVALID_PACKAGE_CONFIG: package `exports` is invalid; sub-object for `./bar` is empty.'
+			],
+			status: 'files'
+		},
+		inspect(nestedEmpty) + ' is invalid; only a non-nested object can have file path keys'
+	);
+
 	/** @type {string[]} */ var fixtures;
 	try { fixtures = fs.readdirSync(fixturesDir); } catch (e) {}
 	// @ts-expect-error ts(2454) TS can't narrow based on tape's `skip`

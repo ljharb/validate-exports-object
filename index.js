@@ -78,7 +78,9 @@ module.exports = function validateExportsObject(obj) {
 				break; // eslint-disable-line no-restricted-syntax
 			}
 
-			if (subObjectResult.status !== 'empty') {
+			if (subObjectResult.status === 'empty') {
+				problems[problems.length] = 'ERR_INVALID_PACKAGE_CONFIG: package `exports` is invalid; sub-object for `' + key + '` is empty.';
+			} else {
 				if (start === '.') {
 					seenDot = true;
 					if (status !== 'conditions') {
@@ -90,10 +92,10 @@ module.exports = function validateExportsObject(obj) {
 						status = 'conditions';
 					}
 				}
-			}
 
-			// @ts-expect-error ts(7053) objects are arbitrarily writable
-			normalized[key] = subObjectResult.normalized;
+				// @ts-expect-error ts(7053) objects are arbitrarily writable
+				normalized[key] = subObjectResult.normalized;
+			}
 		}
 	}
 
