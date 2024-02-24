@@ -71,7 +71,7 @@
 		"object-inspect": "^1.13.1",
 		"safe-publish-latest": "^2.0.0",
 		"tape": "^5.7.3",
-		"typescript": "^5.4.0-dev.20240117"
+		"typescript": "next"
 	},
 	"testling": {
 		"files": "test/index.js"
