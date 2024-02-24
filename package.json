@@ -42,11 +42,11 @@
 	},
 	"homepage": "https://github.com/ljharb/validate-exports-object#readme",
 	"dependencies": {
-		"call-bind": "^1.0.5",
+		"call-bind": "^1.0.7",
 		"isarray": "^2.0.5",
 		"object-keys": "^1.1.1",
 		"safe-array-concat": "^1.1.0",
-		"safe-regex-test": "^1.0.2"
+		"safe-regex-test": "^1.0.3"
 	},
 	"devDependencies": {
 		"@ljharb/eslint-config": "^21.1.0",
