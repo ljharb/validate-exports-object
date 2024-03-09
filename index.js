@@ -13,17 +13,7 @@ var hasNMSegment = regexTester(/(^|\/)node_modules(\/|$)/);
 
 var fnMsg = 'package `exports` is invalid; how did you get a function in there?';
 
-/** @typedef {'empty' | 'files' | 'conditions'} StatusString */
-
-/** @typedef {{ [fileURL in `./${string}`]: Exports }} ExportsFiles */
-
-/** @typedef {{ [condition: string]: condition extends `./${string}` ? never : Exports; }} ExportsConditions */
-
-/** @typedef {Array<Exports>} ExportsArray */
-
-/** @typedef {null | string | ExportsConditions | ExportsFiles | ExportsArray} Exports */
-
-/** @type {<T = unknown>(obj: T, parentKey?: string) => { __proto__: null, normalized: undefined | Exports, problems: string[], status: false | StatusString }} */
+/** @type {import('.')} */
 module.exports = function validateExportsObject(obj) {
 	if (!obj || typeof obj !== 'object') {
 		var isFn = typeof obj === 'function';
@@ -39,11 +29,11 @@ module.exports = function validateExportsObject(obj) {
 	/** @type {string[]} */ var nmSegments = [];
 	var seenFn = false;
 	/** @type {string[]} */ var problems = [];
-	/** @type {StatusString} */ var status = 'empty';
+	/** @type {import('.').StatusString} */ var status = 'empty';
 
-	/** @type {Exports} */ var normalized = isArray(obj) ? [] : { __proto__: null };
+	/** @type {import('.').Exports} */ var normalized = isArray(obj) ? [] : { __proto__: null };
 
-	/** @type {string | null} */ var parentKey = arguments.length > 1 ? arguments[1] : null;
+	/** @type {Parameters<import('.')>[1] | null} */ var parentKey = arguments.length > 1 ? arguments[1] : null;
 	var fullKey = typeof parentKey === 'string' ? parentKey + '` -> `' : '';
 
 	for (var i = 0; i < exportKeys.length; i++) {
