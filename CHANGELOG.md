@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.2](https://github.com/ljharb/validate-exports-object/compare/v1.0.1...v1.0.2) - 2024-03-09
+
+### Commits
+
+- [types] hand-write d.ts instead of emitting it [`683d8ca`](https://github.com/ljharb/validate-exports-object/commit/683d8ca8b747e4ff755124e61be3eee91ffd919f)
+- [types] use shared config [`cd61ef2`](https://github.com/ljharb/validate-exports-object/commit/cd61ef2287e03aa12a7c723521691aefa0de2f23)
+- [actions] remove redundant finisher; use reusable workflow [`93d8ce6`](https://github.com/ljharb/validate-exports-object/commit/93d8ce6abce5074f7173020edde5565b274b1b9d)
+- [Deps] update `call-bind`, `safe-regex-test` [`7f731a1`](https://github.com/ljharb/validate-exports-object/commit/7f731a1867a79743a2a619570ac9eddd06b6e948)
+- [Tests] use `@arethetypeswrong/cli` [`096bf3c`](https://github.com/ljharb/validate-exports-object/commit/096bf3c8322ff32041bcb6925feb0706f5ef9731)
+- [Dev Deps] update `tape` [`934c90c`](https://github.com/ljharb/validate-exports-object/commit/934c90cb82d7fff390aa0ba9cf6a81b73e1622b9)
+- [Dev Deps] update `typescript` [`04a7586`](https://github.com/ljharb/validate-exports-object/commit/04a7586de9d907d10d7544480dcfa9044612fa29)
+
 ## [v1.0.1](https://github.com/ljharb/validate-exports-object/compare/v1.0.0...v1.0.1) - 2024-01-17
 
 ### Commits
