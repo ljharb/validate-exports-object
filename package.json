@@ -14,6 +14,7 @@
 		"prelint": "evalmd README.md",
 		"lint": "eslint --ext=js,mjs .",
 		"tsc": "tsc -p .",
+		"posttsc": "attw -P",
 		"postlint": "npm run tsc",
 		"pretest": "npm run lint",
 		"tests-only": "nyc tape 'test/*.js'",
@@ -46,6 +47,7 @@
 		"safe-regex-test": "^1.0.3"
 	},
 	"devDependencies": {
+		"@arethetypeswrong/cli": "^0.15.1",
 		"@ljharb/eslint-config": "^21.1.0",
 		"@types/call-bind": "^1.0.5",
 		"@types/es-value-fixtures": "^1.4.4",
