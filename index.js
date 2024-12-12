@@ -1,6 +1,6 @@
 'use strict';
 
-var callBound = require('call-bind/callBound');
+var callBound = require('call-bound');
 var isArray = require('isarray');
 var keys = require('object-keys');
 var regexTester = require('safe-regex-test');
