@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.3](https://github.com/ljharb/validate-exports-object/compare/v1.0.2...v1.0.3) - 2024-12-11
+
+### Commits
+
+- [Dev Deps] update `@arethetypeswrong/cli`, `@ljharb/eslint-config`, `@ljharb/tsconfig`, `@types/get-intrinsic`, `@types/object-inspect`, `@types/tape auto-changelog`, `es-value-fixtures`, `object-inspect`, `tape` [`7b08999`](https://github.com/ljharb/validate-exports-object/commit/7b08999605586ee4cca41e817fceb38d97cb4c96)
+- [actions] split out node 10-20, and 20+ [`800d40d`](https://github.com/ljharb/validate-exports-object/commit/800d40d19f6b78ea48747e500a526d7bf8a6063a)
+- [Refactor] use `call-bound` directly [`ea99fce`](https://github.com/ljharb/validate-exports-object/commit/ea99fce8eec9931d981db45afaa230f68844eb71)
+- [Tests] replace `aud` with `npm audit` [`4a4997a`](https://github.com/ljharb/validate-exports-object/commit/4a4997abe381d6c3fd7d516f510689d4b59b9d93)
+- [Deps] update `call-bind` [`011e96b`](https://github.com/ljharb/validate-exports-object/commit/011e96b84f57c7b534241ed04627a99c7d95a646)
+- [Deps] update `safe-array-concat` [`3e5f53c`](https://github.com/ljharb/validate-exports-object/commit/3e5f53c36965a0fe9982dd7af115d01331315405)
+- [Dev Deps] update `@ljharb/tsconfig` [`8e0f950`](https://github.com/ljharb/validate-exports-object/commit/8e0f950a7c07df66e3d6bd82fa74e3ec53b84750)
+- [Dev Deps] add missing peer dep [`516a18d`](https://github.com/ljharb/validate-exports-object/commit/516a18dd47074196993e762a04ff75b698ead4f4)
+
 ## [v1.0.2](https://github.com/ljharb/validate-exports-object/compare/v1.0.1...v1.0.2) - 2024-03-09
 
 ### Commits

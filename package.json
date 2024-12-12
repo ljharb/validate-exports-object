@@ -1,6 +1,6 @@
 {
 	"name": "validate-exports-object",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Validate an object in the \"exports\" field",
 	"main": "index.js",
 	"exports": {
