@@ -40,7 +40,7 @@
 	},
 	"homepage": "https://github.com/ljharb/validate-exports-object#readme",
 	"dependencies": {
-		"call-bind": "^1.0.7",
+		"call-bind": "^1.0.8",
 		"isarray": "^2.0.5",
 		"object-keys": "^1.1.1",
 		"safe-array-concat": "^1.1.2",
